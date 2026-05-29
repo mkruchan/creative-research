@@ -11451,10 +11451,10 @@ async function offerLoadAll() {
   offerRebuildSelect();
 
   // Restore last selected — prefer URL slug match first
-  const _urlSlug = _initialUrlSlug;
+  const _urlSlug = _initialUrlSlug ? _initialUrlSlug.toLowerCase().trim() : '';
   const slugMatch = _urlSlug && _allOffers.find(o => offerSlugFromTitle(o.name) === _urlSlug);
   const lastId = localStorage.getItem(SB_OFFER_KEY);
-  const lastMatch = lastId && _allOffers.find(o => o.id === lastId);
+  const lastMatch = !_urlSlug && lastId && _allOffers.find(o => o.id === lastId);
   if (slugMatch) {
     if (window._loaderSetStatus) window._loaderSetStatus('Fetching data...');
     await offerLoad(slugMatch.id, false);
