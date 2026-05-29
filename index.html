@@ -8899,7 +8899,7 @@ function openTitleLink(e) {
 // ── Offer slug path ──────────────────────────────────────
 function offerSlugFromTitle(title) {
   if (!title) return '';
-  return title.trim().split(/\s+/).slice(0, 2)
+  return title.trim().split(/\s+/)
     .map(w => w.toLowerCase().replace(/[^a-z0-9]+/g, ''))
     .filter(Boolean).join('-');
 }
