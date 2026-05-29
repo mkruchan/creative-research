@@ -11334,20 +11334,9 @@ async function sbSaveConfig() {
   await offerLoadAll();
 }
 
-/* ── Triple-click logo to reveal DB button ── */
+/* ── Triple-click logo to reveal DB button — disabled in public version ── */
 let _logoClicks = 0, _logoTimer = null;
-function logoTripleClick() {
-  _logoClicks++;
-  clearTimeout(_logoTimer);
-  _logoTimer = setTimeout(() => { _logoClicks = 0; }, 600);
-  if (_logoClicks >= 3) {
-    _logoClicks = 0;
-    const navDb = document.getElementById('nav-db');
-    const status = document.getElementById('sidebar-status');
-    if (navDb) navDb.classList.toggle('visible');
-    if (status) status.classList.toggle('visible');
-  }
-}
+function logoTripleClick() {}
 
 /* ── Open Supabase modal (pre-fill, locked) ── */
 function sbModalOpen() {
@@ -12329,6 +12318,10 @@ window.addEventListener('DOMContentLoaded', function() {
     var el = document.getElementById(id);
     if (el) { el.readOnly = true; el.disabled = false; el.style.pointerEvents = 'none'; }
   });
+  // Disable date calendar picker
+  window.toggleCustomCal = function() {};
+  var dateRow = document.querySelector('.oc-meta-value-row[onclick*="toggleCustomCal"]');
+  if (dateRow) { dateRow.style.cursor = 'default'; dateRow.removeAttribute('onclick'); }
   // Disable notes
   document.querySelectorAll('.notes-body textarea, .ic-textarea').forEach(function(el) {
     el.readOnly = true;
