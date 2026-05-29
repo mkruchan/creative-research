@@ -7009,13 +7009,12 @@ const MASTER_API_KEY = '$2a$10$IecvGoWgfhfhPACcMbpQ1ePIEi423.hKIhOwKhAlyX3ARia6W
 const _basePath = '/' + (location.pathname.split('/').filter(Boolean)[0] || '') + '/';
 const _hostPath = (location.hostname + _basePath).replace(/\/$/, '');
 const _urlBin = new URLSearchParams(location.search).get('bin') || '';
-// ── Capture slug from URL immediately — before init() can overwrite pathname via runPostInit ──
+// ── Capture slug from URL immediately — before runPostInit can overwrite pathname ──
 const _initialUrlSlug = (function() {
   const params = new URLSearchParams(location.search);
   const offerParam = params.get('offer');
   if (offerParam) return offerParam;
   const pathSlug = location.pathname.replace(_basePath, '').replace(/\/$/, '').replace(/\.html$/, '');
-  // Only use pathname slug if it looks like a real slug (not a full file path)
   if (pathSlug && !pathSlug.includes('/') && !pathSlug.includes('.')) return pathSlug;
   return '';
 })();
@@ -8899,7 +8898,7 @@ function openTitleLink(e) {
 // ── Offer slug path ──────────────────────────────────────
 function offerSlugFromTitle(title) {
   if (!title) return '';
-  return title.trim().split(/\s+/)
+  return title.trim().split(/\s+/).slice(0, 2)
     .map(w => w.toLowerCase().replace(/[^a-z0-9]+/g, ''))
     .filter(Boolean).join('-');
 }
@@ -9507,7 +9506,7 @@ function saveSetup() {
   if (bin) BIN_ID = bin;
   if (key) API_KEY = key;
   saveSettings();
-  if (bin) { history.replaceState(null, '', location.pathname + '?bin=' + bin); updateShareUrl(); }
+  if (bin) { updateShareUrl(); }
   document.getElementById('setupModal').classList.add('hidden');
   if (BIN_ID && API_KEY) {
     showToast('Connected! Loading data…', 'success');
@@ -9606,10 +9605,7 @@ function saveSetup() {
   if (key) API_KEY = key;
   saveSettings();
   // Update URL without reload so share link is correct
-  if (bin) {
-    const newUrl = location.origin + location.pathname + '?bin=' + bin;
-    history.replaceState(null, '', newUrl);
-  }
+  // URL update on bin change disabled
   document.getElementById('setupModal').classList.add('hidden');
   if (BIN_ID && API_KEY) {
     showToast('Connected! Loading data…', 'success');
@@ -11455,7 +11451,6 @@ async function offerLoadAll() {
   offerRebuildSelect();
 
   // Restore last selected — prefer URL slug match first
-  // Use _initialUrlSlug captured at page-load time (before runPostInit can overwrite pathname)
   const _urlSlug = _initialUrlSlug;
   const slugMatch = _urlSlug && _allOffers.find(o => offerSlugFromTitle(o.name) === _urlSlug);
   const lastId = localStorage.getItem(SB_OFFER_KEY);
