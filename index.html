@@ -7092,8 +7092,8 @@ const _initialUrlSlug = (function() {
   const params = new URLSearchParams(location.search);
   const offerParam = params.get('offer');
   if (offerParam) return offerParam;
-  const pathSlug = location.pathname.replace(_basePath, '').replace(/\/$/, '').replace(/\.html$/, '');
-  if (pathSlug && !pathSlug.includes('/') && !pathSlug.includes('.')) return pathSlug;
+  const pathSlug = location.pathname.replace(_basePath, '').replace(/\.html$/, '').split('/').filter(Boolean)[0];
+  if (pathSlug && !pathSlug.includes('.')) return pathSlug;
   return '';
 })();
 // Per-file key — always keyed to the base path, not the slug URL
