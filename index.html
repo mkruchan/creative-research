@@ -7105,6 +7105,20 @@ const MASTER_API_KEY = '$2a$10$IecvGoWgfhfhPACcMbpQ1ePIEi423.hKIhOwKhAlyX3ARia6W
 
 
 
+// ── Restore path encoded by 404.html (GitHub Pages SPA routing) ──
+(function() {
+  var params = new URLSearchParams(location.search);
+  var p = params.get('p');
+  if (!p) return;
+  var rest = decodeURIComponent(p);
+  var q = params.get('q') ? '?' + decodeURIComponent(params.get('q')) : '';
+  params.delete('p'); params.delete('q');
+  var remaining = params.toString() ? '?' + params.toString() : '';
+  var base = location.pathname.replace(/\/$/, '');
+  var newPath = base + rest + (q || remaining) + location.hash;
+  history.replaceState(null, '', newPath);
+})();
+
 // Base path = first path segment — strip any trailing slug segment
 const _basePath = (() => { const seg = location.pathname.split('/').filter(Boolean)[0]; return seg ? '/' + seg + '/' : '/'; })();
 const _hostPath = (location.hostname + _basePath).replace(/\/$/, '');
@@ -11693,7 +11707,8 @@ async function offerLoadAll() {
 
   // If table empty AND no URL slug, auto-save current page as first offer
   const _initUrlParams = new URLSearchParams(location.search);
-  const _initSlug = _initUrlParams.get('offer') || (location.pathname.replace(_basePath, '').replace(/\.html$/, '').split('/').filter(Boolean)[0]) || '';
+  // Read the slug frozen at page start: by now runPostInit may already have rewritten the path to the cached offer
+  const _initSlug = _initialUrlSlug;
   if (_allOffers.length === 0 && !_initSlug) {
     const title = (document.getElementById('main-title')?.dataset?.text || '').trim();
     if (title && title !== '—') {
