@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; media-src 'self' https: data: blob:; connect-src 'self' https://vdannnwpikfipdamphlu.supabase.co wss://vdannnwpikfipdamphlu.supabase.co; frame-src 'none'; worker-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; media-src 'self' https: data: blob:; connect-src 'self' https://vdannnwpikfipdamphlu.supabase.co wss://vdannnwpikfipdamphlu.supabase.co https://mykytak.app.n8n.cloud; frame-src 'none'; worker-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Multi-Platform Creative Research</title>
@@ -12897,5 +12897,150 @@ window.addEventListener('DOMContentLoaded', function() {
   h1#main-title, .ds-top-header-title { letter-spacing: -0.02em !important; }
   td { font-variant-numeric: tabular-nums; }
 </style>
+<!-- research assistant chat (public_chat.py) -->
+<link rel="stylesheet" href="/creative-research/vendor/n8n-chat-1.41.1/style.css">
+<style>
+  /* Research assistant — n8n chat widget themed with the site's own tokens (light + dark follow the page) */
+  #n8n-chat {
+    --chat--font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+    --chat--color--primary: var(--accent); --chat--color--primary-shade-50: var(--accent-hover); --chat--color--primary--shade-100: var(--accent-hover);
+    --chat--color--secondary: var(--accent); --chat--color-secondary-shade-50: var(--accent-hover);
+    --chat--color-white: var(--surface); --chat--color-light: var(--bg-secondary); --chat--color-light-shade-50: var(--bg-tertiary);
+    --chat--color-light-shade-100: var(--border-light); --chat--color-medium: var(--border-mid); --chat--color-dark: var(--text-primary);
+    --chat--color-disabled: var(--text-muted); --chat--color-typing: var(--text-muted);
+    --chat--spacing: 16px; --chat--border-radius: 16px; --chat--transition-duration: .18s;
+    --chat--window--width: 400px; --chat--window--height: 620px; --chat--window--bottom: 20px; --chat--window--right: 20px;
+    --chat--window--border: 1px solid var(--border-light); --chat--window--border-radius: 16px; --chat--window--z-index: 9999;
+    --chat--header-height: auto; --chat--header--padding: 16px 18px; --chat--header--background: var(--surface);
+    --chat--header--color: var(--text-primary); --chat--header--border-bottom: 1px solid var(--border-light);
+    --chat--heading--font-size: 15px; --chat--subtitle--font-size: 12px; --chat--subtitle--line-height: 1.4;
+    --chat--body--background: var(--bg-secondary); --chat--messages-list--padding: 16px;
+    --chat--message--font-size: 13.5px; --chat--message-line-height: 1.55; --chat--message--padding: 11px 14px;
+    --chat--message--border-radius: 12px; --chat--message--margin-bottom: 10px;
+    --chat--message--bot--background: var(--surface); --chat--message--bot--color: var(--text-primary);
+    --chat--message--bot--border: 1px solid var(--border-light);
+    --chat--message--user--background: var(--accent); --chat--message--user--color: #fff; --chat--message--user--border: none;
+    --chat--message--pre--background: var(--bg-tertiary);
+    --chat--footer--background: var(--surface); --chat--footer--color: var(--text-muted); --chat--footer--border-top: 1px solid var(--border-light); --chat--footer--padding: 0;
+    --chat--input--container--background: var(--surface); --chat--input--background: var(--bg-tertiary); --chat--input--text-color: var(--text-primary);
+    --chat--input--border: 1px solid var(--border-light); --chat--input--border-active: 1px solid var(--accent);
+    --chat--input--border-radius: 10px; --chat--input--padding: 10px 12px; --chat--input--font-size: 13.5px;
+    --chat--input--send--button--background: transparent; --chat--input--send--button--color: var(--accent);
+    --chat--input--send--button--background-hover: var(--accent-muted); --chat--input--send--button--color-hover: var(--accent);
+    --chat--toggle--size: 54px; --chat--toggle--background: var(--accent); --chat--toggle--hover--background: var(--accent-hover);
+    --chat--toggle--active--background: var(--accent-hover); --chat--toggle--color: #fff;
+    font-size: 13.5px;
+  }
+  #n8n-chat .chat-window { box-shadow: var(--shadow-lg); background: var(--surface); }
+  #n8n-chat .chat-window-toggle { box-shadow: 0 6px 20px rgba(37,99,235,.35); }
+  /* AI sparkles instead of the speech bubble on the closed chat button (the open state keeps its chevron) */
+  #n8n-chat .chat-window-toggle svg:has(path[d^="M12 3c5.5"]) { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M10 2.5c.7 4.9 2.6 6.8 7.5 7.5-4.9.7-6.8 2.6-7.5 7.5-.7-4.9-2.6-6.8-7.5-7.5 4.9-.7 6.8-2.6 7.5-7.5z'/%3E%3Cpath d='M18.5 14c.35 2.2 1.1 2.95 3.3 3.3-2.2.35-2.95 1.1-3.3 3.3-.35-2.2-1.1-2.95-3.3-3.3 2.2-.35 2.95-1.1 3.3-3.3z'/%3E%3Cpath d='M18.5 2.5c.25 1.5.75 2 2.25 2.25-1.5.25-2 .75-2.25 2.25-.25-1.5-.75-2-2.25-2.25 1.5-.25 2-.75 2.25-2.25z'/%3E%3C/svg%3E") center / 28px no-repeat; }
+  #n8n-chat .chat-window-toggle svg path[d^="M12 3c5.5"] { display: none; }
+  #n8n-chat .chat-header { display: flex; flex-direction: column; gap: 2px; padding-left: 64px !important; position: relative; }
+  #n8n-chat .chat-header::before {
+    content: ""; position: absolute; left: 18px; top: 50%; transform: translateY(-50%); width: 34px; height: 34px; border-radius: 10px;
+    background: var(--accent-muted) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3l1.9 4.6L18.5 9.5l-4.6 1.9L12 16l-1.9-4.6L5.5 9.5l4.6-1.9z'/%3E%3Cpath d='M19 15l.8 1.9 1.9.8-1.9.8L19 20.4l-.8-1.9-1.9-.8 1.9-.8z'/%3E%3C/svg%3E") center / 20px no-repeat;
+  }
+  #n8n-chat .chat-header h1 { margin: 0; font-weight: 600; letter-spacing: -0.01em; display: flex; align-items: center; gap: 8px; }
+  #n8n-chat .chat-header h1::after { content: "AI"; font-size: 9.5px; font-weight: 700; letter-spacing: .05em; line-height: 1; padding: 3px 5px; border-radius: 5px; background: var(--blue-bg); color: var(--blue-text); }
+  #n8n-chat .chat-header p { margin: 0; color: var(--text-secondary); }
+  #n8n-chat .chat-header .chat-close-button { color: var(--text-secondary); }
+  #n8n-chat .chat-message { box-shadow: var(--shadow-xs); max-width: 88%; }
+  #n8n-chat .chat-message-from-user { border-bottom-right-radius: 4px; }
+  #n8n-chat .chat-message-from-bot { border-bottom-left-radius: 4px; }
+  #n8n-chat .chat-message-markdown p { margin: 0 0 8px; } #n8n-chat .chat-message-markdown p:last-child { margin-bottom: 0; }
+  #n8n-chat .chat-message-markdown ul, #n8n-chat .chat-message-markdown ol { margin: 4px 0 8px; padding-left: 18px; }
+  #n8n-chat .chat-message-markdown li { margin: 2px 0; }
+  #n8n-chat .chat-message-markdown strong { font-weight: 600; }
+  #n8n-chat .chat-message-markdown h1, #n8n-chat .chat-message-markdown h2, #n8n-chat .chat-message-markdown h3 { font-size: 13.5px; font-weight: 600; margin: 10px 0 4px; }
+  /* Tables in answers. The page has global table rules (fixed layout, max-content width, white row on hover,
+     zero cell padding, hidden overflow) — reset them all here so answers stay readable in light and dark. */
+  #n8n-chat .chat-message-from-bot:has(table) { max-width: 100%; }
+  #n8n-chat .chat-message-markdown table {
+    display: block; overflow-x: auto; max-width: 100%; width: auto; table-layout: auto;
+    border-collapse: collapse; border-spacing: 0; margin: 8px 0; font-size: 12.5px; line-height: 1.45;
+    font-variant-numeric: tabular-nums; -webkit-overflow-scrolling: touch;
+  }
+  #n8n-chat .chat-message-markdown thead, #n8n-chat .chat-message-markdown tbody { background: transparent !important; }
+  #n8n-chat .chat-message-markdown tr,
+  #n8n-chat .chat-message-markdown tbody tr:hover,
+  #n8n-chat .chat-message-markdown tbody tr:nth-child(even) { background: transparent !important; position: static; border: 0 !important; box-shadow: none !important; }
+  #n8n-chat .chat-message-markdown th, #n8n-chat .chat-message-markdown td {
+    padding: 6px 8px !important; border: 0; border-bottom: 1px solid var(--border-light) !important;
+    vertical-align: top; overflow: visible !important; white-space: normal;
+    word-break: normal; overflow-wrap: break-word; hyphens: none;
+    color: var(--text-primary); background: transparent !important;
+  }
+  /* the page has `thead th { … !important }` (uppercase, nowrap, white background) — beat it inside the chat */
+  #n8n-chat .chat-message-markdown thead th, #n8n-chat .chat-message-markdown th {
+    position: static; text-align: left !important; font-size: 11.5px !important; font-weight: 600 !important;
+    letter-spacing: 0 !important; text-transform: none !important; color: var(--text-secondary) !important;
+    white-space: normal !important; user-select: auto; background: transparent !important;
+  }
+  #n8n-chat .chat-message-markdown td:first-child, #n8n-chat .chat-message-markdown th:first-child { padding-left: 0 !important; }
+  #n8n-chat .chat-message-markdown td.ra-tight { width: 1%; white-space: nowrap !important; }
+  #n8n-chat .chat-message-markdown th.ra-tight { width: 1%; }   /* short columns (channel, format, numbers) */
+  #n8n-chat .chat-message-markdown tbody tr:last-child td { border-bottom: 0 !important; }
+  #n8n-chat .chat-message-markdown tbody tr:hover td { background: var(--accent-muted) !important; }
+  #n8n-chat .chat-message-markdown a { color: var(--accent); }
+  #n8n-chat .chat-inputs { padding: 12px 14px; gap: 6px; }
+  #n8n-chat .chat-inputs textarea:focus { box-shadow: 0 0 0 3px var(--accent-muted); outline: none; }
+  #n8n-chat ::-webkit-scrollbar { width: 6px; height: 6px; }
+  #n8n-chat ::-webkit-scrollbar-track { background: transparent !important; border: 0 !important; }
+  #n8n-chat ::-webkit-scrollbar-thumb { background: var(--border-mid) !important; border: 0 !important; border-radius: 99px; }
+  #n8n-chat ::-webkit-scrollbar-corner { background: transparent !important; }
+  #n8n-chat .chat-body, #n8n-chat .chat-message-markdown table { scrollbar-width: thin; scrollbar-color: var(--border-mid) transparent; }
+  @media (max-width: 480px) { #n8n-chat { --chat--window--width: calc(100vw - 24px); --chat--window--height: calc(100dvh - 110px); --chat--window--right: 12px; --chat--window--bottom: 12px; } }
+  @media (prefers-reduced-motion: reduce) { #n8n-chat { --chat--transition-duration: 0s; } }
+</style>
+<!-- Research assistant (n8n "Creative Research – Partner Chat (public)"): sees research + website metrics only, never payouts.
+     The widget is served from this site (vendor/, copied by make_page.py from the npm package @n8n/chat@1.41.1), not a CDN. -->
+<script type="module">
+  import { createChat } from '/creative-research/vendor/n8n-chat-1.41.1/chat.bundle.es.js';
+
+  // First message lists example questions; the first ones follow the offer that is open on the page
+  const titleNow = () => (document.getElementById('main-title')?.textContent || '').trim();
+  const waitForTitle = async () => { for (let i = 0; i < 30 && !titleNow(); i++) await new Promise(r => setTimeout(r, 100)); return titleNow(); };
+  const t = await waitForTitle();
+  const o = t ? t.split(/\s+-\s+|\s*\(/)[0].trim() : 'Quicken Refi';
+  const hello = [
+    `Hi! I know the research behind every offer on this site: top ads, angles, funnels, traffic sources and how each offer converts.`,
+    ``,
+    `**You can ask me, for example:**`,
+    `- Which angles work best for ${o}?`,
+    `- Which ${o} ads have run the longest?`,
+    `- How does ${o} convert: CR and EPC?`,
+    `- Video or static: what wins for ${o}?`,
+    `- Which traffic sources should I test first?`,
+    `- Write 3 hooks for ${o} based on the top ads`,
+    `- Which offers have the best EPC right now?`,
+    `- Which offers work on native (Taboola, Outbrain)?`,
+  ].join('\n');
+
+  createChat({
+    webhookUrl: 'https://mykytak.app.n8n.cloud/webhook/d9bedabe-3f61-455a-8029-41744f241211/chat',
+    mode: 'window',
+    showWelcomeScreen: false,
+    loadPreviousSession: false,
+    initialMessages: [hello],
+    i18n: { en: { title: 'Research assistant', subtitle: 'Ask about ads, angles, funnels and offer stats', footer: '',
+                  getStarted: 'New conversation', inputPlaceholder: 'Ask a question…' } },
+  });
+
+  // Answer tables: keep short columns (e.g. "Meta", "Video", "170") tight so the long text column gets the room
+  const tightenTables = () => {
+    for (const t of document.querySelectorAll('#n8n-chat .chat-message-markdown table:not([data-ra])')) {
+      t.dataset.ra = '1';
+      const cols = Math.max(0, ...[...t.rows].map(r => r.cells.length));
+      for (let c = 0; c < cols; c++) {
+        const cells = [...t.rows].map(r => r.cells[c]).filter(Boolean);
+        const longest = Math.max(0, ...cells.slice(1).map(x => x.textContent.trim().length));
+        if (longest && longest <= 14) cells.forEach(x => x.classList.add('ra-tight'));
+      }
+    }
+  };
+  new MutationObserver(tightenTables).observe(document.body, { childList: true, subtree: true });
+</script>
+<!-- /research assistant chat -->
 </body>
 </html>
